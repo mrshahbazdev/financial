@@ -47,7 +47,7 @@
                         <div class="flex items-center gap-4">
                             <x-primary-button>{{ __('Save Industry') }}</x-primary-button>
                             <a href="{{ route('taps.index') }}"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">Cancel</a>
+                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">{{ __('Cancel') }}</a>
                         </div>
                     </form>
                 </div>
