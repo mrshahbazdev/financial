@@ -91,7 +91,7 @@
     </div>
 
     <script type="module">
-        import Chart from 'chart.js/auto';
+        // import Chart from 'chart.js/auto'; // Using global window.Chart from app.js
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('simulator', () => ({
