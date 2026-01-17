@@ -96,6 +96,30 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('analyses.index')" :active="request()->routeIs('analyses.*')">
+                {{ __('Analyses') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('taps.index')" :active="request()->routeIs('taps.*')">
+                {{ __('Industries') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('simulator')" :active="request()->routeIs('simulator')">
+                {{ __('Simulator 🎮') }}
+            </x-responsive-nav-link>
+        </div>
+
+        <!-- Responsive Language Switcher -->
+        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+            <div class="px-4 text-xs text-gray-400 uppercase font-semibold">
+                {{ __('Language') }}
+            </div>
+            <div class="mt-2 space-y-1">
+                <x-responsive-nav-link :href="route('lang.switch', 'en')" :active="app()->getLocale() == 'en'">
+                    English
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('lang.switch', 'de')" :active="app()->getLocale() == 'de'">
+                    Deutsch
+                </x-responsive-nav-link>
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
