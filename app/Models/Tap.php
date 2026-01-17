@@ -11,7 +11,10 @@ class Tap extends Model
 
     protected $fillable = [
         'user_id',
+        'label',
         'industry',
+        'min_revenue',
+        'max_revenue',
         'profit',
         'owner_pay',
         'tax',

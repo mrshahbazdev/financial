@@ -33,7 +33,19 @@ class AnalysisController extends Controller
             'actual_opex' => 'required|numeric',
         ]);
 
-        $tap = Tap::findOrFail($validated['tap_id']);
+        // Auto-detect TAP based on Real Revenue
+        $tap = Tap::where(function ($query) use ($validated) {
+            $query->where('min_revenue', '<=', $validated['real_revenue'])
+                ->where('max_revenue', '>=', $validated['real_revenue']);
+        })->orWhere(function ($query) use ($validated) {
+            // Fallback for custom TAPS without ranges or if no range matches (picking first matching custom or system)
+            $query->whereNull('min_revenue')->where('id', $validated['tap_id'] ?? 0);
+        })->first();
+
+        // If no TAP found via range, fallback to the submitted ID or fail
+        if (!$tap) {
+            $tap = Tap::findOrFail($validated['tap_id']);
+        }
 
         // Create Analysis Header
         $analysis = Analysis::create([
@@ -52,18 +64,15 @@ class AnalysisController extends Controller
         foreach ($categories as $name => $data) {
             $pf_amount = $validated['real_revenue'] * ($data['tap'] / 100);
             $bleed = $data['actual'] - $pf_amount;
-            $fix = $bleed < 0 ? 'Decrease' : 'Increase'; // Correct logic? 
-            // User said: Bleed = Actual - PF$.
-            // If Actual (100) > PF$ (80), Bleed is +20 (Positive). "The Bleed".
-            // If Bleed is positive, do we Increase or Decrease?
-            // Usually if Expense is higher than PF, we need to DECREASE expense.
-            // If Profit is higher than PF, that's good?
-            // Wait, "The Fix (Increase / Decrease suggestion)".
-            // If Actual Expense > Target (PF), bleed is positive. We need to Decrease expense.
-            // If Actual Profit < Target, bleed is negative. We need to Increase profit.
-            // But the prompt says: "$fix = $bleed < 0 ? 'Increase' : 'Decrease';"
-            // Let's follow the prompt's formula explicitly for now.
-            // PROMPT: "$fix = $bleed < 0 ? 'Increase' : 'Decrease';"
+
+            // Fix Logic per user request:
+            // Delta (bleed) < 0 => Increase (erhöhen)
+            // Delta (bleed) > 0 => Decrease (verringern)
+            $fix = $bleed < 0 ? 'Increase' : 'Decrease';
+
+            if ($bleed == 0) {
+                $fix = 'On Track';
+            }
 
             $analysis->rows()->create([
                 'category' => $name,

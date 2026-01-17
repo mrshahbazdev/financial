@@ -20,16 +20,11 @@
                             <x-input-error :messages="$errors->get('real_revenue')" class="mt-2" />
                         </div>
 
-                        <!-- Industry Selection -->
-                        <div>
-                            <x-input-label for="tap_id" :value="__('Select Industry (TAPS)')" />
-                            <select id="tap_id" name="tap_id"
-                                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                @foreach($taps as $tap)
-                                    <option value="{{ $tap->id }}">{{ $tap->industry }} (Profit {{ $tap->profit }}%)
-                                    </option>
-                                @endforeach
-                            </select>
+                        <!-- Industry Selection (Auto-detected) -->
+                        <div class="hidden">
+                            <!-- Hidden input or just removed entirely. Controller validation needs update if removed. -->
+                            <!-- Leaving logic for now, will handle in controller update -->
+                            <input type="hidden" name="tap_id" value="1">
                         </div>
 
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
