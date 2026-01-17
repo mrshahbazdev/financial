@@ -22,22 +22,31 @@
                     class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">{{ config('app.name', 'Financial') }}</span>
             </div>
             <div class="flex items-center gap-4">
+                <!-- Language Switcher -->
+                <div class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <a href="{{ route('lang.switch', 'en') }}"
+                        class="{{ app()->getLocale() == 'en' ? 'text-indigo-600 font-bold' : 'hover:text-gray-900 dark:hover:text-white' }}">EN</a>
+                    <span>|</span>
+                    <a href="{{ route('lang.switch', 'de') }}"
+                        class="{{ app()->getLocale() == 'de' ? 'text-indigo-600 font-bold' : 'hover:text-gray-900 dark:hover:text-white' }}">DE</a>
+                </div>
+
                 @if (Route::has('login'))
                     <div class="flex gap-4">
                         @auth
                             <a href="{{ url('/dashboard') }}"
                                 class="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                                Dashboard <span aria-hidden="true">&rarr;</span>
+                                {{ __('Dashboard') }} <span aria-hidden="true">&rarr;</span>
                             </a>
                         @else
                             <a href="{{ route('login') }}"
                                 class="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                                Log in
+                                {{ __('Log in') }}
                             </a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}"
                                     class="rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition">
-                                    Register
+                                    {{ __('Register') }}
                                 </a>
                             @endif
                         @endauth
@@ -59,26 +68,26 @@
                 <div class="hidden sm:mb-8 sm:flex sm:justify-center">
                     <div
                         class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 dark:text-gray-300 ring-1 ring-gray-900/10 dark:ring-gray-100/10 hover:ring-gray-900/20 dark:hover:ring-gray-100/20 transition">
-                        Empowering business growth with Profit First. <a href="#"
+                        {{ __('Empowering business growth with Profit First.') }} <a href="#"
                             class="font-semibold text-indigo-600 dark:text-indigo-400"><span class="absolute inset-0"
-                                aria-hidden="true"></span>Read more <span aria-hidden="true">&rarr;</span></a>
+                                aria-hidden="true"></span>{{ __('Read more') }} <span
+                                aria-hidden="true">&rarr;</span></a>
                     </div>
                 </div>
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-                    Master Your Business Finances
+                    {{ __('Master Your Business Finances') }}
                 </h1>
                 <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                    Take control of your cash flow with our advanced analytics and simulation tools. Implement the
-                    Profit First methodology to ensure your business stays healthy and profitable.
+                    {{ __('Take control of your cash flow with our advanced analytics and simulation tools. Implement the Profit First methodology to ensure your business stays healthy and profitable.') }}
                 </p>
                 <div class="mt-10 flex items-center justify-center gap-x-6">
                     <a href="{{ route('register') }}"
                         class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition">
-                        Get started
+                        {{ __('Get started') }}
                     </a>
                     <a href="{{ route('login') }}"
                         class="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
-                        Live demo <span aria-hidden="true">→</span>
+                        {{ __('Live demo') }} <span aria-hidden="true">→</span>
                     </a>
                 </div>
             </div>
@@ -95,10 +104,10 @@
         <section class="py-12 bg-white dark:bg-gray-800">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl lg:text-center">
-                    <h2 class="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">Deploy faster
-                    </h2>
+                    <h2 class="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">
+                        {{ __('Deploy faster') }}</h2>
                     <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                        Everything you need to analyze financial health</p>
+                        {{ __('Everything you need to analyze financial health') }}</p>
                 </div>
                 <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
                     <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
@@ -114,10 +123,10 @@
                                             d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                                     </svg>
                                 </div>
-                                Instant Assessment
+                                {{ __('Instant Assessment') }}
                             </dt>
-                            <dd class="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">Run comprehensive
-                                financial assessments in seconds. Understand where your business stands immediately.
+                            <dd class="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">
+                                {{ __('Run comprehensive financial assessments in seconds. Understand where your business stands immediately.') }}
                             </dd>
                         </div>
                         <div class="relative pl-16">
@@ -130,10 +139,11 @@
                                             d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
                                     </svg>
                                 </div>
-                                TAPS Analysis
+                                {{ __('TAPS Analysis') }}
                             </dt>
-                            <dd class="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">Define and track your
-                                Target Allocation Percentages. Adjust your strategy based on industry standards.</dd>
+                            <dd class="mt-2 text-base leading-7 text-gray-600 dark:text-gray-300">
+                                {{ __('Define and track your Target Allocation Percentages. Adjust your strategy based on industry standards.') }}
+                            </dd>
                         </div>
                     </dl>
                 </div>
@@ -149,7 +159,7 @@
                 </div>
                 <div class="mt-8 md:order-1 md:mt-0">
                     <p class="text-center text-xs leading-5 text-gray-500">
-                        Empowering businesses to profitability.
+                        {{ __('Empowering businesses to profitability.') }}
                     </p>
                 </div>
             </div>

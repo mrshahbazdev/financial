@@ -10,13 +10,14 @@
 
             <!-- Controls Section -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Simulation Controls</h3>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">{{ __('Simulation Controls') }}</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Revenue Slider -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
-                            Projected Revenue Change: <span class="font-bold text-indigo-600 dark:text-indigo-400"
+                            {{ __('Projected Revenue Change:') }} <span
+                                class="font-bold text-indigo-600 dark:text-indigo-400"
                                 x-text="revenueChange + '%'"></span>
                         </label>
                         <input type="range" min="-50" max="50" step="5" x-model="revenueChange" @input="updateCharts"
@@ -31,7 +32,7 @@
                     <!-- OPEX Slider -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
-                            Reduce OPEX by: <span class="font-bold text-red-600 dark:text-red-400"
+                            {{ __('Reduce OPEX by:') }} <span class="font-bold text-red-600 dark:text-red-400"
                                 x-text="opexReduction + '%'"></span>
                         </label>
                         <input type="range" min="0" max="30" step="5" x-model="opexReduction" @input="updateCharts"
@@ -50,37 +51,39 @@
 
                 <!-- Projected Numbers -->
                 <div class="bg-indigo-50 dark:bg-indigo-900 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-4">Projected Outcome</h3>
+                    <h3 class="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-4">
+                        {{ __('Projected Outcome') }}</h3>
 
                     <div class="space-y-4">
                         <div
                             class="flex justify-between items-center border-b border-indigo-200 dark:border-indigo-700 pb-2">
-                            <span class="text-indigo-700 dark:text-indigo-300">New Revenue:</span>
+                            <span class="text-indigo-700 dark:text-indigo-300">{{ __('New Revenue:') }}</span>
                             <span class="text-xl font-bold text-indigo-900 dark:text-indigo-100"
                                 x-text="formatMoney(projectedRevenue)"></span>
                         </div>
                         <div
                             class="flex justify-between items-center border-b border-indigo-200 dark:border-indigo-700 pb-2">
-                            <span class="text-indigo-700 dark:text-indigo-300">Projected Profit:</span>
+                            <span class="text-indigo-700 dark:text-indigo-300">{{ __('Projected Profit:') }}</span>
                             <span class="text-xl font-bold text-green-600 dark:text-green-400"
                                 x-text="formatMoney(projectedProfit)"></span>
                         </div>
                         <div class="flex justify-between items-center pb-2">
-                            <span class="text-indigo-700 dark:text-indigo-300">Projected OPEX:</span>
+                            <span class="text-indigo-700 dark:text-indigo-300">{{ __('Projected OPEX:') }}</span>
                             <span class="text-xl font-bold text-red-500 dark:text-red-300"
                                 x-text="formatMoney(projectedOpex)"></span>
                         </div>
                     </div>
 
                     <div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-inner">
-                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Analysis:</p>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('Analysis:') }}</p>
                         <p class="text-md font-bold text-gray-900 dark:text-gray-100 mt-1" x-text="analysisMessage"></p>
                     </div>
                 </div>
 
                 <!-- Visual Chart -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Current vs Projected Profit</h3>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
+                        {{ __('Current vs Projected Profit') }}</h3>
                     <div class="h-64">
                         <canvas id="simulatorChart"></canvas>
                     </div>

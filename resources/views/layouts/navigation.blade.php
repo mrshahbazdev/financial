@@ -25,6 +25,16 @@
                         {{ __('Simulator 🎮') }}
                     </x-nav-link>
                 </div>
+
+                <!-- Language Switcher -->
+                <div
+                    class="hidden sm:flex sm:items-center sm:ms-6 space-x-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <a href="{{ route('lang.switch', 'en') }}"
+                        class="{{ app()->getLocale() == 'en' ? 'text-indigo-600 font-bold' : 'hover:text-gray-700 dark:hover:text-gray-300' }}">EN</a>
+                    <span>|</span>
+                    <a href="{{ route('lang.switch', 'de') }}"
+                        class="{{ app()->getLocale() == 'de' ? 'text-indigo-600 font-bold' : 'hover:text-gray-700 dark:hover:text-gray-300' }}">DE</a>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
