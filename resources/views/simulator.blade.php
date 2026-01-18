@@ -5,7 +5,75 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" x-data="simulator()">
+    <div class="py-12" x-data="{
+        revenueChange: 0,
+        opexReduction: 0,
+        baseRevenue: {{ $baseData['revenue'] }},
+        baseProfit: {{ $baseData['profit'] }},
+        baseOpex: {{ $baseData['opex'] }},
+        chart: null,
+
+        init() {
+            this.initChart();
+            this.$watch('revenueChange', () => this.updateCharts());
+            this.$watch('opexReduction', () => this.updateCharts());
+        },
+
+        get projectedRevenue() {
+            return this.baseRevenue * (1 + (this.revenueChange / 100));
+        },
+
+        get projectedOpex() {
+            return this.baseOpex * (1 - (this.opexReduction / 100));
+        },
+
+        get projectedProfit() {
+            let profitMargin = this.baseRevenue > 0 ? (this.baseProfit / this.baseRevenue) : 0;
+            let profitFromNewRevenue = this.projectedRevenue * profitMargin;
+            let savingsFromOpex = this.baseOpex - this.projectedOpex;
+            return profitFromNewRevenue + savingsFromOpex;
+        },
+
+        get analysisMessage() {
+            let diff = this.projectedProfit - this.baseProfit;
+            if (diff > 0) return `🚀 Your profit could increase by ${this.formatMoney(diff)}!`;
+            if (diff < 0) return `⚠️ Warning: Your profit might drop by ${this.formatMoney(Math.abs(diff))}.`;
+            return 'Adjust the sliders to see what happens.';
+        },
+
+        formatMoney(value) {
+            return '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+        },
+
+        initChart() {
+            const ctx = document.getElementById('simulatorChart');
+            this.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current', 'Projected'],
+                    datasets: [{
+                        label: 'Profit ($)',
+                        data: [this.baseProfit, this.projectedProfit],
+                        backgroundColor: ['#6366f1', '#22c55e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        },
+
+        updateCharts() {
+            if (this.chart) {
+                this.chart.data.datasets[0].data = [this.baseProfit, this.projectedProfit];
+                this.chart.update();
+            }
+        }
+    }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Controls Section -->
@@ -95,97 +163,4 @@
         </div>
     </div>
 
-    <script type="module">
-        // import Chart from 'chart.js/auto'; // Using global window.Chart from app.js
-
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('simulator', () => ({
-                revenueChange: 0,
-                opexReduction: 0,
-                baseRevenue: {{ $baseData['revenue'] }},
-                baseProfit: {{ $baseData['profit'] }},
-                baseOpex: {{ $baseData['opex'] }},
-                chart: null,
-
-                init() {
-                    this.initChart();
-                    this.$watch('revenueChange', () => this.updateCharts());
-                    this.$watch('opexReduction', () => this.updateCharts());
-                },
-
-                get projectedRevenue() {
-                    return this.baseRevenue * (1 + (this.revenueChange / 100));
-                },
-
-                get projectedOpex() {
-                    // Opex reduction is usually independent of revenue for fixed costs, 
-                    // but often varies. Here we simulate a direct cut to the specific amount.
-                    return this.baseOpex * (1 - (this.opexReduction / 100));
-                },
-
-                get projectedProfit() {
-                    // Simple logic: Profit = Revenue - Expenses (simplified for simulator)
-                    // Real Profit First logic allocates percentages. 
-                    // For the simulator, let's assume the profit MARGIN stays similar or improves?
-                    // actually, let's just do: New Profit = Old Profit + (Revenue Change Impact) + (Opex Savings)
-
-                    let revenueDiff = this.projectedRevenue - this.baseRevenue;
-                    // Assuming similar margin on new revenue? Or just pure addition?
-                    // Let's keep it simple: Profit increase = Revenue Increase - Opex.
-
-                    // Actually, let's just re-calculate based on simple math:
-                    // Profit = Revenue - Opex - Tax - OwnerPay (Assuming Tax/OwnerPay stay constant? No, that's wrong).
-                    // Let's just PROJECTION:
-                    // If Opex goes DOWN, Profit goes UP directly.
-                    // If Revenue goes UP, Profit goes UP by the profit margin.
-
-                    let profitMargin = this.baseRevenue > 0 ? (this.baseProfit / this.baseRevenue) : 0;
-                    let profitFromNewRevenue = this.projectedRevenue * profitMargin;
-                    let savingsFromOpex = this.baseOpex - this.projectedOpex;
-
-                    return profitFromNewRevenue + savingsFromOpex;
-                },
-
-                get analysisMessage() {
-                    let diff = this.projectedProfit - this.baseProfit;
-                    if (diff > 0) return `🚀 Your profit could increase by ${this.formatMoney(diff)}!`;
-                    if (diff < 0) return `⚠️ Warning: Your profit might drop by ${this.formatMoney(Math.abs(diff))}.`;
-                    return "Adjust the sliders to see what happens.";
-                },
-
-                formatMoney(value) {
-                    return '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
-                },
-
-                initChart() {
-                    const ctx = document.getElementById('simulatorChart');
-                    this.chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Current', 'Projected'],
-                            datasets: [{
-                                label: 'Profit ($)',
-                                data: [this.baseProfit, this.projectedProfit],
-                                backgroundColor: ['#6366f1', '#22c55e']
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: { beginAtZero: true }
-                            }
-                        }
-                    });
-                },
-
-                updateCharts() {
-                    if (this.chart) {
-                        this.chart.data.datasets[0].data = [this.baseProfit, this.projectedProfit];
-                        this.chart.update();
-                    }
-                }
-            }))
-        });
-    </script>
 </x-app-layout>
