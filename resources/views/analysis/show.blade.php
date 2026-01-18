@@ -131,8 +131,7 @@
                                 @foreach($analysis->rows as $row)
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __($row->category) }} <br>
-                                        <span class="text-xxs text-gray-400">({{ number_format($row->q1_caps, 1) }}%)</span>
+                                        {{ __($row->category) }}
                                     </th>
                                 @endforeach
                             </tr>
@@ -153,10 +152,19 @@
                                             <span x-text="'$' + ((q1[month] || 0) / 2).toFixed(2)"></span>
                                         </td>
                                         @foreach($analysis->rows as $row)
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                <span
-                                                    x-text="'$' + calculateTransfer((q1[month] || 0) / 2, '{{ $row->category }}').toFixed(2)"></span>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                <div class="flex flex-col space-y-1">
+                                                    <div class="flex items-center space-x-1">
+                                                        <input type="number"
+                                                            x-model.number="monthlyCaps[month]['{{ $row->category }}']"
+                                                            class="w-16 text-xs p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
+                                                            step="0.1">
+                                                        <span class="text-xs print:hidden">%</span>
+                                                        <span class="hidden print:inline text-xs" x-text="monthlyCaps[month]['{{ $row->category }}'] + '%'"></span>
+                                                    </div>
+                                                    <span class="font-medium text-gray-900 dark:text-gray-100"
+                                                        x-text="'$' + calculateTransfer((q1[month] || 0) / 2, '{{ $row->category }}', month).toFixed(2)"></span>
+                                                </div>
                                             </td>
                                         @endforeach
                                     </tr>
@@ -182,6 +190,11 @@
                 activeTab: 'details',
                 chartInstance: null,
                 q1: { jan: 0, feb: 0, mar: 0 },
+                monthlyCaps: {
+                    jan: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
+                    feb: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
+                    mar: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
+                },
                 initChart() {
                     if (this.chartInstance) {
                         this.chartInstance.destroy();
@@ -229,9 +242,9 @@
                         });
                     });
                 },
-                calculateTransfer(amount, category) {
-                    const row = rows.find(r => r.category === category);
-                    return row ? (amount * (row.q1_caps / 100)) : 0;
+                calculateTransfer(amount, category, month) {
+                    const cap = this.monthlyCaps[month]?.[category] || 0;
+                    return (amount * (cap / 100));
                 },
                 printPage() {
                     window.print();
