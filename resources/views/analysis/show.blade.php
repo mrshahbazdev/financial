@@ -5,80 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" x-data="{
-        activeTab: 'details',
-        chartInstance: null,
-        chartData: {
-            labels: @json($analysis->rows->pluck('category')),
-            actuals: @json($analysis->rows->pluck('actual_amount')),
-            targets: @json($analysis->rows->pluck('pf_amount'))
-        },
-        q1: {
-            jan: 0,
-            feb: 0,
-            mar: 0
-        },
-        caps: {
-            @foreach($analysis->rows as $row)
-                '{{ $row->category }}': {{ $row->q1_caps }},
-            @endforeach
-        },
-        initChart() {
-            if (this.chartInstance) {
-                this.chartInstance.destroy();
-            }
-
-            // Wait for DOM update
-            this.$nextTick(() => {
-                const ctx = document.getElementById('analysisChart');
-                if (!ctx) return;
-
-                this.chartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: this.chartData.labels,
-                        datasets: [
-                            {
-                                label: 'Actual ($)',
-                                data: this.chartData.actuals,
-                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Target (PF $)',
-                                data: this.chartData.targets,
-                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function (value) {
-                                        return '$' + value;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        },
-        calculateTransfer(amount, category) {
-            let cap = this.caps[category] || 0;
-            return (amount * (cap / 100));
-        },
-        printPage() {
-            window.print();
-        }
-    }" x-init="initChart()">
+    <div class="py-12" x-data='analysisLogic(@json($analysis->rows, JSON_HEX_APOS))' x-init="initChart()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header Actions -->
             <div class="mb-4 flex justify-between items-center print:hidden">
@@ -249,6 +176,69 @@
     </div>
 
     <!-- Print Styles -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('analysisLogic', (rows) => ({
+                activeTab: 'details',
+                chartInstance: null,
+                q1: { jan: 0, feb: 0, mar: 0 },
+                initChart() {
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                    }
+
+                    this.$nextTick(() => {
+                        const ctx = document.getElementById('analysisChart');
+                        if (!ctx) return;
+
+                        this.chartInstance = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: rows.map(r => r.category),
+                                datasets: [
+                                    {
+                                        label: 'Actual ($)',
+                                        data: rows.map(r => r.actual_amount),
+                                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Target (PF $)',
+                                        data: rows.map(r => r.pf_amount),
+                                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function (value) {
+                                                return '$' + value;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                },
+                calculateTransfer(amount, category) {
+                    const row = rows.find(r => r.category === category);
+                    return row ? (amount * (row.q1_caps / 100)) : 0;
+                },
+                printPage() {
+                    window.print();
+                }
+            }));
+        });
+    </script>
     <style>
         @media print {
 
