@@ -209,21 +209,13 @@
 
     <!-- Print Styles -->
     <script>
-        <script>
         document.addEventListener('alpine:init', () => {
-                Alpine.data('analysisLogic', (initialRows) => ({
-                    activeTab: 'details',
-                    chartInstance: null,
-                    isSaving: false,
-                    rows: initialRows,
-                    q1: @json($analysis->q1_revenue_data ?? [
-                        'jan_10' => 0,
-                        'jan_25' => 0,
-                        'feb_10' => 0,
-                        'feb_25' => 0,
-                        'mar_10' => 0,
-                        'mar_25' => 0
-                    ]),
+            Alpine.data('analysisLogic', (initialRows) => ({
+                activeTab: 'details',
+                chartInstance: null,
+                isSaving: false,
+                rows: initialRows,
+                q1: @json($analysis->q1_revenue_data ?? ['jan_10' => 0, 'jan_25' => 0, 'feb_10' => 0, 'feb_25' => 0, 'mar_10' => 0, 'mar_25' => 0]),
                     initChart() {
                         if (this.chartInstance) {
                             this.chartInstance.destroy();
