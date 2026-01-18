@@ -161,11 +161,15 @@
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900 rounded-lg">
+                <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900 rounded-lg flex justify-between items-center">
                     <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">
                         {{ __('Total Q1 Revenue:') }} <span
                             x-text="'$' + (parseFloat(q1.jan || 0) + parseFloat(q1.feb || 0) + parseFloat(q1.mar || 0)).toFixed(2)"></span>
                     </p>
+                    <button @click="activeTab = 'targets'"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        {{ __('Next: View Targets') }} &rarr;
+                    </button>
                 </div>
             </div>
 
