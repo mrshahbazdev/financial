@@ -75,28 +75,60 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <x-input-label for="jan_rev" :value="__('January Revenue ($)')" />
-                        <x-text-input id="jan_rev" x-model.number="q1.jan" class="block mt-1 w-full" type="number"
-                            step="0.01" />
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- January -->
+                    <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ __('January') }}</h4>
+                        <div>
+                            <x-input-label for="jan_10" :value="__('10th ($)')" />
+                            <x-text-input id="jan_10" x-model.number="q1.jan_10" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
+                        <div>
+                            <x-input-label for="jan_25" :value="__('25th ($)')" />
+                            <x-text-input id="jan_25" x-model.number="q1.jan_25" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
                     </div>
-                    <div>
-                        <x-input-label for="feb_rev" :value="__('February Revenue ($)')" />
-                        <x-text-input id="feb_rev" x-model.number="q1.feb" class="block mt-1 w-full" type="number"
-                            step="0.01" />
+
+                    <!-- February -->
+                    <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ __('February') }}</h4>
+                        <div>
+                            <x-input-label for="feb_10" :value="__('10th ($)')" />
+                            <x-text-input id="feb_10" x-model.number="q1.feb_10" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
+                        <div>
+                            <x-input-label for="feb_25" :value="__('25th ($)')" />
+                            <x-text-input id="feb_25" x-model.number="q1.feb_25" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
                     </div>
-                    <div>
-                        <x-input-label for="mar_rev" :value="__('March Revenue ($)')" />
-                        <x-text-input id="mar_rev" x-model.number="q1.mar" class="block mt-1 w-full" type="number"
-                            step="0.01" />
+
+                    <!-- March -->
+                    <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <h4 class="font-medium text-gray-900 dark:text-gray-100">{{ __('March') }}</h4>
+                        <div>
+                            <x-input-label for="mar_10" :value="__('10th ($)')" />
+                            <x-text-input id="mar_10" x-model.number="q1.mar_10" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
+                        <div>
+                            <x-input-label for="mar_25" :value="__('25th ($)')" />
+                            <x-text-input id="mar_25" x-model.number="q1.mar_25" class="block mt-1 w-full" type="number"
+                                step="0.01" />
+                        </div>
                     </div>
                 </div>
 
                 <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900 rounded-lg flex justify-between items-center">
                     <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">
-                        {{ __('Total Q1 Revenue:') }} <span
-                            x-text="'$' + (parseFloat(q1.jan || 0) + parseFloat(q1.feb || 0) + parseFloat(q1.mar || 0)).toFixed(2)"></span>
+                        {{ __('Total Q1 Revenue:') }} <span x-text="'$' + (
+                                parseFloat(q1.jan_10 || 0) + parseFloat(q1.jan_25 || 0) +
+                                parseFloat(q1.feb_10 || 0) + parseFloat(q1.feb_25 || 0) +
+                                parseFloat(q1.mar_10 || 0) + parseFloat(q1.mar_25 || 0)
+                            ).toFixed(2)"></span>
                     </p>
                     <button @click="activeTab = 'targets'"
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
@@ -122,60 +154,39 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Month') }}
-                                </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ __('Date') }}
                                 </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Allocation Base (50%)') }}
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    {{ __('Revenue') }}
                                 </th>
-                                @foreach($analysis->rows as $row)
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        {{ __($row->category) }}
+                                <template x-for="row in rows" :key="row.id">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <div class="flex flex-col">
+                                            <span x-text="row.category"></span>
+                                            <span class="text-xxs text-gray-400" x-text="'(' + row.q1_caps + '%)'"></span>
+                                        </div>
                                     </th>
-                                @endforeach
+                                </template>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            <!-- Helper template for rows -->
-                            <template x-for="month in ['jan', 'feb', 'mar']">
-                                <template x-for="date in ['10th', '25th']">
-                                    <tr>
-                                        <template x-if="date === '10th'">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 capitalize"
-                                                :rowspan="2" x-text="month"></td>
-                                        </template>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"
-                                            x-text="date"></td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            <span x-text="'$' + ((q1[month] || 0) / 2).toFixed(2)"></span>
+                            <template x-for="cycle in [
+                                { key: 'jan_10', label: 'Jan 10' }, { key: 'jan_25', label: 'Jan 25' },
+                                { key: 'feb_10', label: 'Feb 10' }, { key: 'feb_25', label: 'Feb 25' },
+                                { key: 'mar_10', label: 'Mar 10' }, { key: 'mar_25', label: 'Mar 25' }
+                            ]">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" x-text="cycle.label"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <span x-text="'$' + (q1[cycle.key] || 0).toFixed(2)"></span>
+                                    </td>
+                                    <template x-for="row in rows" :key="row.id">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                            <span x-text="'$' + calculateTransfer((q1[cycle.key] || 0), row.category).toFixed(2)"></span>
                                         </td>
-                                        @foreach($analysis->rows as $row)
-                                            <td
-                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                <div class="flex flex-col space-y-1">
-                                                    <div class="flex items-center space-x-1">
-                                                        <input type="number"
-                                                            x-model.number="monthlyCaps[month]['{{ $row->category }}']"
-                                                            class="w-16 text-xs p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
-                                                            step="0.1">
-                                                        <span class="text-xs print:hidden">%</span>
-                                                        <span class="hidden print:inline text-xs"
-                                                            x-text="monthlyCaps[month]['{{ $row->category }}'] + '%'"></span>
-                                                    </div>
-                                                    <span class="font-medium text-gray-900 dark:text-gray-100"
-                                                        x-text="'$' + calculateTransfer((q1[month] || 0) / 2, '{{ $row->category }}', month).toFixed(2)"></span>
-                                                </div>
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                </template>
+                                    </template>
+                                </tr>
                             </template>
                         </tbody>
                     </table>
@@ -193,16 +204,19 @@
     <!-- Print Styles -->
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('analysisLogic', (rows) => ({
+            Alpine.data('analysisLogic', (initialRows) => ({
                 activeTab: 'details',
                 chartInstance: null,
                 isSaving: false,
-                q1: @json($analysis->q1_revenue_data ?? ['jan' => 0, 'feb' => 0, 'mar' => 0]),
-                monthlyCaps: {
-                    jan: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.jan ?? row.q1_caps }), {}),
-                    feb: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.feb ?? row.q1_caps }), {}),
-                    mar: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.mar ?? row.q1_caps }), {}),
-                },
+                rows: initialRows,
+                q1: @json($analysis->q1_revenue_data ?? [
+                    'jan_10' => 0,
+                    'jan_25' => 0,
+                    'feb_10' => 0,
+                    'feb_25' => 0,
+                    'mar_10' => 0,
+                    'mar_25' => 0
+                ]),
                 initChart() {
                     if (this.chartInstance) {
                         this.chartInstance.destroy();
@@ -215,18 +229,18 @@
                         this.chartInstance = new Chart(ctx, {
                             type: 'bar',
                             data: {
-                                labels: rows.map(r => r.category),
+                                labels: this.rows.map(r => r.category),
                                 datasets: [
                                     {
                                         label: 'Actual ($)',
-                                        data: rows.map(r => r.actual_amount),
+                                        data: this.rows.map(r => r.actual_amount),
                                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                                         borderColor: 'rgba(54, 162, 235, 1)',
                                         borderWidth: 1
                                     },
                                     {
                                         label: 'Target (PF $)',
-                                        data: rows.map(r => r.pf_amount),
+                                        data: this.rows.map(r => r.pf_amount),
                                         backgroundColor: 'rgba(75, 192, 192, 0.6)',
                                         borderColor: 'rgba(75, 192, 192, 1)',
                                         borderWidth: 1
@@ -250,41 +264,84 @@
                         });
                     });
                 },
+
+                this.$nextTick(() => {
+                    const ctx = document.getElementById('analysisChart');
+                    if (!ctx) return;
+
+                    this.chartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: rows.map(r => r.category),
+                            datasets: [
+                                {
+                                    label: 'Actual ($)',
+                                    data: rows.map(r => r.actual_amount),
+                                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Target (PF $)',
+                                    data: rows.map(r => r.pf_amount),
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return '$' + value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            },
                 calculateTransfer(amount, category, month) {
                     const cap = this.monthlyCaps[month]?.[category] || 0;
-                    return (amount * (cap / 100));
-                },
-                async saveData() {
-                    this.isSaving = true;
-                    try {
-                        const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({
-                                q1_revenue_data: this.q1,
-                                monthly_caps: this.monthlyCaps
-                            })
-                        });
+                    return(amount * (cap / 100));
+        },
+            async saveData() {
+            this.isSaving = true;
+            try {
+                const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        q1_revenue_data: this.q1,
+                        monthly_caps: this.monthlyCaps
+                    })
+                });
 
-                        if (response.ok) {
-                            // Optional: Show toast
-                            alert('Saved successfully!');
-                        } else {
-                            alert('Failed to save.');
-                        }
+                if(response.ok) {
+            // Optional: Show toast
+            alert('Saved successfully!');
+        } else {
+            alert('Failed to save.');
+        }
                     } catch (error) {
-                        console.error('Error saving:', error);
-                        alert('Error saving data.');
-                    } finally {
-                        this.isSaving = false;
-                    }
+            console.error('Error saving:', error);
+            alert('Error saving data.');
+        } finally {
+            this.isSaving = false;
+        }
                 },
-                printPage() {
-                    window.print();
-                }
+        printPage() {
+            window.print();
+        }
             }));
         });
     </script>
