@@ -215,89 +215,89 @@
                 chartInstance: null,
                 isSaving: false,
                 rows: initialRows,
-                q1: @json($analysis->q1_revenue_data ?? ['jan_10' => 0, 'jan_25' => 0, 'feb_10' => 0, 'feb_25' => 0, 'mar_10' => 0, 'mar_25' => 0]),
-                    initChart() {
-                        if (this.chartInstance) {
-                            this.chartInstance.destroy();
-                        }
+                q1: {!! json_encode($analysis->q1_revenue_data ?? ['jan_10' => 0, 'jan_25' => 0, 'feb_10' => 0, 'feb_25' => 0, 'mar_10' => 0, 'mar_25' => 0]) !!},
+                initChart() {
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                    }
 
-                        this.$nextTick(() => {
-                            const ctx = document.getElementById('analysisChart');
-                            if (!ctx) return;
+                    this.$nextTick(() => {
+                        const ctx = document.getElementById('analysisChart');
+                        if (!ctx) return;
 
-                            this.chartInstance = new Chart(ctx, {
-                                type: 'bar',
-                                data: {
-                                    labels: this.rows.map(r => r.category),
-                                    datasets: [
-                                        {
-                                            label: 'Actual ($)',
-                                            data: this.rows.map(r => r.actual_amount),
-                                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                                            borderColor: 'rgba(54, 162, 235, 1)',
-                                            borderWidth: 1
-                                        },
-                                        {
-                                            label: 'Target (PF $)',
-                                            data: this.rows.map(r => r.pf_amount),
-                                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                            borderColor: 'rgba(75, 192, 192, 1)',
-                                            borderWidth: 1
-                                        }
-                                    ]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            ticks: {
-                                                callback: function (value) {
-                                                    return '$' + value;
-                                                }
+                        this.chartInstance = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: this.rows.map(r => r.category),
+                                datasets: [
+                                    {
+                                        label: 'Actual ($)',
+                                        data: this.rows.map(r => r.actual_amount),
+                                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Target (PF $)',
+                                        data: this.rows.map(r => r.pf_amount),
+                                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: function (value) {
+                                                return '$' + value;
                                             }
                                         }
                                     }
                                 }
-                            });
-                        });
-                    },
-                    calculateTransfer(amount, category) {
-                        const row = this.rows.find(r => r.category === category);
-                        return row ? (amount * (row.q1_caps / 100)) : 0;
-                    },
-                    async saveData() {
-                        this.isSaving = true;
-                        try {
-                            const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                },
-                                body: JSON.stringify({
-                                    q1_revenue_data: this.q1,
-                                    rows_data: this.rows.map(r => ({ id: r.id, q1_caps: r.q1_caps }))
-                                })
-                            });
-
-                            if (response.ok) {
-                                alert('{{ __('Saved successfully!') }}');
-                            } else {
-                                alert('{{ __('Failed to save.') }}');
                             }
-                        } catch (error) {
-                            console.error('Error saving:', error);
-                            alert('{{ __('Error saving data.') }}');
-                        } finally {
-                            this.isSaving = false;
+                        });
+                    });
+                },
+                calculateTransfer(amount, category) {
+                    const row = this.rows.find(r => r.category === category);
+                    return row ? (amount * (row.q1_caps / 100)) : 0;
+                },
+                async saveData() {
+                    this.isSaving = true;
+                    try {
+                        const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                q1_revenue_data: this.q1,
+                                rows_data: this.rows.map(r => ({ id: r.id, q1_caps: r.q1_caps }))
+                            })
+                        });
+
+                        if (response.ok) {
+                            alert('{{ __('Saved successfully!') }}');
+                        } else {
+                            alert('{{ __('Failed to save.') }}');
                         }
-                    },
-                    printPage() {
-                        window.print();
+                    } catch (error) {
+                        console.error('Error saving:', error);
+                        alert('{{ __('Error saving data.') }}');
+                    } finally {
+                        this.isSaving = false;
                     }
-                }));
+                },
+                printPage() {
+                    window.print();
+                }
+            }));
         });
     </script>
     <style>
