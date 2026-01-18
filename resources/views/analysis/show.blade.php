@@ -75,7 +75,7 @@
             <!-- Tab 2: Q1 2026 Data Input -->
             <div x-show="activeTab === 'q1'"
                 class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <div class="mb-6flex justify-between items-center">
+                <div class="mb-6 flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {{ __('Revenue Data') }}
@@ -246,8 +246,8 @@
                             {{ __('Transfer targets for the 10th and 25th of each month.') }}
                         </p>
                     </div>
-                     <!-- Quarter Selector -->
-                     <div class="inline-flex rounded-md shadow-sm print:hidden" role="group">
+                    <!-- Quarter Selector -->
+                    <div class="inline-flex rounded-md shadow-sm print:hidden" role="group">
                         <template x-for="q in ['q1', 'q2', 'q3', 'q4']">
                             <button type="button" @click="activeQuarter = q"
                                 :class="activeQuarter === q ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600'"
