@@ -20,7 +20,7 @@
                                 class="font-bold text-indigo-600 dark:text-indigo-400"
                                 x-text="revenueChange + '%'"></span>
                         </label>
-                        <input type="range" min="-50" max="50" step="5" x-model="revenueChange" @input="updateCharts"
+                        <input type="range" min="-50" max="50" step="5" x-model="revenueChange" @input="updateCharts()"
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
                             <span>-50%</span>
@@ -35,7 +35,7 @@
                             {{ __('Reduce OPEX by:') }} <span class="font-bold text-red-600 dark:text-red-400"
                                 x-text="opexReduction + '%'"></span>
                         </label>
-                        <input type="range" min="0" max="30" step="5" x-model="opexReduction" @input="updateCharts"
+                        <input type="range" min="0" max="30" step="5" x-model="opexReduction" @input="updateCharts()"
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
                             <span>0%</span>
@@ -52,7 +52,8 @@
                 <!-- Projected Numbers -->
                 <div class="bg-indigo-50 dark:bg-indigo-900 overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-4">
-                        {{ __('Projected Outcome') }}</h3>
+                        {{ __('Projected Outcome') }}
+                    </h3>
 
                     <div class="space-y-4">
                         <div
@@ -83,7 +84,8 @@
                 <!-- Visual Chart -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
-                        {{ __('Current vs Projected Profit') }}</h3>
+                        {{ __('Current vs Projected Profit') }}
+                    </h3>
                     <div class="h-64">
                         <canvas id="simulatorChart"></canvas>
                     </div>
