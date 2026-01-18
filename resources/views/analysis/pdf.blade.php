@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Profit First Analysis Report</title>
+    <title>Allocore Financial Analysis Report</title>
     <style>
         body {
             font-family: sans-serif;
@@ -59,7 +59,7 @@
 
 <body>
     <div class="header">
-        <h1>Profit First Analysis</h1>
+        <h1>Allocore Financial Analysis</h1>
         @if($analysis->client_name)
             <h2 style="margin-top: 5px; color: #555;">{{ $analysis->client_name }}</h2>
         @endif

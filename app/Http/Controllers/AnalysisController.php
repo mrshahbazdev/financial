@@ -110,7 +110,7 @@ class AnalysisController extends Controller
         $analysis->load('rows');
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('analysis.pdf', compact('analysis'))->setPaper('a4', 'landscape');
-        return $pdf->download('profit-first-analysis-' . $analysis->id . '.pdf');
+        return $pdf->download('allocore-financial-analysis-' . $analysis->id . '.pdf');
     }
     public function updateTargets(Request $request, Analysis $analysis)
     {
