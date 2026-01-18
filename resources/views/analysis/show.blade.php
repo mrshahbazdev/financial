@@ -479,6 +479,25 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
+
+            /* Fix for scrollable tables in print */
+            .overflow-x-auto,
+            .overflow-hidden {
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            /* Ensure table fits */
+            table {
+                width: 100% !important;
+                table-layout: auto !important;
+            }
+
+            /* Optional: Reduce font size slightly to fit more columns if needed */
+            .text-sm {
+                font-size: 0.75rem !important;
+                /* equivalent to text-xs */
+            }
         }
     </style>
 </x-app-layout>
