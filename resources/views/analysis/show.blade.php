@@ -25,8 +25,8 @@
                 </p>
             </div>
 
-            <!-- Analysis Table -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <!-- Analysis Table (Desktop) -->
+            <div class="hidden md:block bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
@@ -61,6 +61,18 @@
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    {{ __('Q1 CAPS') }}
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    {{ __('Q2 CAPS') }}
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    {{ __('Q3 CAPS') }}
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ __('Q4 CAPS') }}
                                 </th>
                             </tr>
@@ -91,6 +103,15 @@
                                         {{ number_format($row->haps, 1) }}%
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {{ number_format($row->q1_caps, 1) }}%
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {{ number_format($row->q2_caps, 1) }}%
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {{ number_format($row->q3_caps, 1) }}%
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ number_format($row->q4_caps, 1) }}%
                                     </td>
                                 </tr>
@@ -100,12 +121,69 @@
                 </div>
             </div>
 
+            <!-- Analysis Cards (Mobile) -->
+            <div class="md:hidden space-y-4">
+                @foreach($analysis->rows as $row)
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-lg text-gray-900 dark:text-gray-100">{{ $row->category }}</h4>
+                            <span class="text-xs font-semibold px-2 py-1 rounded {{ $row->bleed < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                {{ $row->fix }}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Actual') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">${{ number_format($row->actual_amount, 2) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('PF Target') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">${{ number_format($row->pf_amount, 2) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Bleed') }}</p>
+                                <p class="font-medium {{ $row->bleed < 0 ? 'text-red-500' : 'text-green-500' }}">
+                                    ${{ number_format($row->bleed, 2) }}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('TAPS %') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ $row->taps_percentage }}%</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2 text-xs">
+                             <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('HAPS') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->haps, 1) }}%</p>
+                            </div>
+                             <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q1 CAPS') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q1_caps, 1) }}%</p>
+                            </div>
+                             <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q2 CAPS') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q2_caps, 1) }}%</p>
+                            </div>
+                             <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q3 CAPS') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q3_caps, 1) }}%</p>
+                            </div>
+                             <div>
+                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q4 CAPS') }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q4_caps, 1) }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
             <!-- Annual Summary Section -->
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Chart Section -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        {{ __('Actual vs Target (TAPS)') }}</h3>
+                        {{ __('Actual vs Target (TAPS)') }}
+                    </h3>
                     <canvas id="analysisChart"></canvas>
                 </div>
 
