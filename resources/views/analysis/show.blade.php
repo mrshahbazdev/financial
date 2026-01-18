@@ -7,6 +7,12 @@
 
     <div class="py-12" x-data="{
         activeTab: 'details',
+        chartInstance: null,
+        chartData: {
+            labels: @json($analysis->rows->pluck('category')),
+            actuals: @json($analysis->rows->pluck('actual_amount')),
+            targets: @json($analysis->rows->pluck('pf_amount'))
+        },
         q1: {
             jan: 0,
             feb: 0,
@@ -17,6 +23,54 @@
                 '{{ $row->category }}': {{ $row->q1_caps }},
             @endforeach
         },
+        initChart() {
+            if (this.chartInstance) {
+                this.chartInstance.destroy();
+            }
+
+            // Wait for DOM update
+            this.$nextTick(() => {
+                const ctx = document.getElementById('analysisChart');
+                if (!ctx) return;
+
+                this.chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: this.chartData.labels,
+                        datasets: [
+                            {
+                                label: 'Actual ($)',
+                                data: this.chartData.actuals,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Target (PF $)',
+                                data: this.chartData.targets,
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        },
         calculateTransfer(amount, category) {
             let cap = this.caps[category] || 0;
             return (amount * (cap / 100));
@@ -24,14 +78,14 @@
         printPage() {
             window.print();
         }
-    }">
+    }" x-init="initChart()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header Actions -->
             <div class="mb-4 flex justify-between items-center print:hidden">
                 <!-- Tabs Navigation -->
                 <div class="border-b border-gray-200 dark:border-gray-700">
                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                        <button @click="activeTab = 'details'"
+                        <button @click="activeTab = 'details'; $nextTick(() => initChart())"
                             :class="activeTab === 'details' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'"
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                             {{ __('Analysis Details') }}
