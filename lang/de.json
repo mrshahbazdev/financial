@@ -114,5 +114,21 @@
     "On Track": "Im Plan",
     "Q1 CAPS": "Q1 CAPS",
     "Q2 CAPS": "Q2 CAPS",
-    "Q3 CAPS": "Q3 CAPS"
+    "Q3 CAPS": "Q3 CAPS",
+    "Analysis Details": "Analyse-Details",
+    "Q1 2026 Data": "Q1 2026 Daten",
+    "Target Overview": "Zielübersicht",
+    "Save Changes": "Änderungen speichern",
+    "Saving...": "Wird gespeichert...",
+    "Print View": "Druckansicht",
+    "Download PDF": "PDF herunterladen",
+    "Q1 2026 Revenue Projection": "Umsatzprognose Q1 2026",
+    "Enter your projected or actual revenue for Q1 to calculate your transfer targets.": "Geben Sie Ihren erwarteten oder tatsächlichen Umsatz für Q1 ein, um Ihre Transferziele zu berechnen.",
+    "January Revenue ($)": "Umsatz Januar ($)",
+    "February Revenue ($)": "Umsatz Februar ($)",
+    "March Revenue ($)": "Umsatz März ($)",
+    "Total Q1 Revenue:": "Gesamtumsatz Q1:",
+    "Next: View Targets": "Weiter: Ziele anzeigen",
+    "Target Overview (Transfers)": "Zielübersicht (Transfers)",
+    "Allocation Base is 50% of the total revenue for the month, assuming equal distribution for the 10th and 25th transfers.": "Die Zuweisungsbasis beträgt 50% des Monatsumsatzes, basierend auf einer gleichmäßigen Verteilung für die Überweisungen am 10. und 25."
 }
