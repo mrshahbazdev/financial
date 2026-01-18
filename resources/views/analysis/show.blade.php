@@ -82,7 +82,7 @@
                                 <tr>
                                     <td
                                         class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                        {{ $row->category }}
+                                        {{ __($row->category) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         ${{ number_format($row->actual_amount, 2) }}</td>
@@ -97,7 +97,7 @@
                                     </td>
                                     <td
                                         class="px-6 py-4 whitespace-nowrap text-sm font-bold {{ $row->fix == 'Increase' ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ $row->fix }}
+                                        {{ __($row->fix) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ number_format($row->haps, 1) }}%
@@ -126,19 +126,22 @@
                 @foreach($analysis->rows as $row)
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4">
                         <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold text-lg text-gray-900 dark:text-gray-100">{{ $row->category }}</h4>
-                            <span class="text-xs font-semibold px-2 py-1 rounded {{ $row->bleed < 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                {{ $row->fix }}
+                            <h4 class="font-bold text-lg text-gray-900 dark:text-gray-100">{{ __($row->category) }}</h4>
+                            <span
+                                class="text-xs font-semibold px-2 py-1 rounded {{ $row->fix == 'Increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ __($row->fix) }}
                             </span>
                         </div>
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Actual') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">${{ number_format($row->actual_amount, 2) }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    ${{ number_format($row->actual_amount, 2) }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('PF Target') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">${{ number_format($row->pf_amount, 2) }}</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    ${{ number_format($row->pf_amount, 2) }}</p>
                             </div>
                             <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Bleed') }}</p>
@@ -152,25 +155,34 @@
                             </div>
                         </div>
                         <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2 text-xs">
-                             <div>
+                            <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('HAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->haps, 1) }}%</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->haps, 1) }}%
+                                </p>
                             </div>
-                             <div>
+                            <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Q1 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q1_caps, 1) }}%</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    {{ number_format($row->q1_caps, 1) }}%
+                                </p>
                             </div>
-                             <div>
+                            <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Q2 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q2_caps, 1) }}%</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    {{ number_format($row->q2_caps, 1) }}%
+                                </p>
                             </div>
-                             <div>
+                            <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Q3 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q3_caps, 1) }}%</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    {{ number_format($row->q3_caps, 1) }}%
+                                </p>
                             </div>
-                             <div>
+                            <div>
                                 <p class="text-gray-500 dark:text-gray-400">{{ __('Q4 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->q4_caps, 1) }}%</p>
+                                <p class="font-medium text-gray-900 dark:text-gray-100">
+                                    {{ number_format($row->q4_caps, 1) }}%
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -201,8 +213,8 @@
                         @foreach($analysis->rows as $row)
                             @if($row->bleed != 0)
                                 <li>
-                                    {{ $row->category }}:
-                                    <span class="font-bold">{{ $row->fix }}</span>
+                                    {{ __($row->category) }}:
+                                    <span class="font-bold">{{ __($row->fix) }}</span>
                                     {{ __('by') }} ${{ number_format(abs($row->bleed), 2) }}
                                     @if($row->fix == 'Increase')
                                         {{ __('(Allocated too little)') }}
