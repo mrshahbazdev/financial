@@ -5,279 +5,213 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12" x-data="{
+        activeTab: 'details',
+        q1: {
+            jan: 0,
+            feb: 0,
+            mar: 0
+        },
+        caps: {
+            @foreach($analysis->rows as $row)
+                '{{ $row->category }}': {{ $row->q1_caps }},
+            @endforeach
+        },
+        calculateTransfer(amount, category) {
+            let cap = this.caps[category] || 0;
+            return (amount * (cap / 100));
+        },
+        printPage() {
+            window.print();
+        }
+    }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header Actions -->
-            <div class="mb-4 flex justify-end">
-                <a href="{{ route('analyses.pdf', $analysis) }}"
-                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    {{ __('Download PDF Report') }}
-                </a>
+            <div class="mb-4 flex justify-between items-center print:hidden">
+                <!-- Tabs Navigation -->
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <button @click="activeTab = 'details'"
+                            :class="activeTab === 'details' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            {{ __('Analysis Details') }}
+                        </button>
+                        <button @click="activeTab = 'q1'"
+                            :class="activeTab === 'q1' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            {{ __('Q1 2026 Data') }}
+                        </button>
+                        <button @click="activeTab = 'targets'"
+                            :class="activeTab === 'targets' ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                            {{ __('Target Overview') }}
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="flex space-x-2">
+                    <button @click="printPage()"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        {{ __('Print View') }}
+                    </button>
+                    <a href="{{ route('analyses.pdf', $analysis) }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                        {{ __('Download PDF') }}
+                    </a>
+                </div>
             </div>
 
-            <!-- Summary Header -->
-            <div class="mb-6 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Details') }}</h3>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ __('Real Revenue:') }}
-                    ${{ number_format($analysis->real_revenue, 2) }}</p>
-                <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Date:') }}
-                    {{ $analysis->created_at->format('M d, Y') }}
-                </p>
+            <!-- Tab 1: Analysis Details -->
+            <div x-show="activeTab === 'details'" class="space-y-6">
+                <!-- Summary Header -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Details') }}</h3>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ __('Real Revenue:') }}
+                        ${{ number_format($analysis->real_revenue, 2) }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Date:') }}
+                        {{ $analysis->created_at->format('M d, Y') }}
+                    </p>
+                </div>
+
+                <!-- Analysis Contents (Existing Table) -->
+                @include('analysis.partials.details-view', ['analysis' => $analysis])
             </div>
 
-            <!-- Analysis Table (Desktop) -->
-            <div class="hidden md:block bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100 overflow-x-auto">
+            <!-- Tab 2: Q1 2026 Data Input -->
+            <div x-show="activeTab === 'q1'"
+                class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {{ __('Q1 2026 Revenue Projection') }}
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ __('Enter your projected or actual revenue for Q1 to calculate your transfer targets.') }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <x-input-label for="jan_rev" :value="__('January Revenue ($)')" />
+                        <x-text-input id="jan_rev" x-model.number="q1.jan" class="block mt-1 w-full" type="number"
+                            step="0.01" />
+                    </div>
+                    <div>
+                        <x-input-label for="feb_rev" :value="__('February Revenue ($)')" />
+                        <x-text-input id="feb_rev" x-model.number="q1.feb" class="block mt-1 w-full" type="number"
+                            step="0.01" />
+                    </div>
+                    <div>
+                        <x-input-label for="mar_rev" :value="__('March Revenue ($)')" />
+                        <x-text-input id="mar_rev" x-model.number="q1.mar" class="block mt-1 w-full" type="number"
+                            step="0.01" />
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900 rounded-lg">
+                    <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">
+                        {{ __('Total Q1 Revenue:') }} <span
+                            x-text="'$' + (parseFloat(q1.jan || 0) + parseFloat(q1.feb || 0) + parseFloat(q1.mar || 0)).toFixed(2)"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tab 3: Target Overview -->
+            <div x-show="activeTab === 'targets'"
+                class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 print:block">
+                <div class="mb-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        {{ __('Target Overview (Transfers)') }}
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ __('Transfer targets for the 10th and 25th of each month based on Q1 CAPS.') }}
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th scope="col"
+                                <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Category') }}
+                                    {{ __('Month') }}
                                 </th>
-                                <th scope="col"
+                                <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Actual') }}
+                                    {{ __('Date') }}
                                 </th>
-                                <th scope="col"
+                                <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('TAPS %') }}
+                                    {{ __('Allocation Base (50%)') }}
                                 </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('PF $') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('The Bleed') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('The Fix') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('HAPS %') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Q1 CAPS') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Q2 CAPS') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Q3 CAPS') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    {{ __('Q4 CAPS') }}
-                                </th>
+                                @foreach($analysis->rows as $row)
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        {{ __($row->category) }} <br>
+                                        <span class="text-xxs text-gray-400">({{ number_format($row->q1_caps, 1) }}%)</span>
+                                    </th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach($analysis->rows as $row)
-                                <tr>
-                                    <td
-                                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                        {{ __($row->category) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        ${{ number_format($row->actual_amount, 2) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $row->taps_percentage }}%
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        ${{ number_format($row->pf_amount, 2) }}</td>
-                                    <td
-                                        class="px-6 py-4 whitespace-nowrap text-sm {{ $row->bleed < 0 ? 'text-red-500' : 'text-green-500' }}">
-                                        ${{ number_format($row->bleed, 2) }}
-                                    </td>
-                                    <td
-                                        class="px-6 py-4 whitespace-nowrap text-sm font-bold {{ $row->fix == 'Increase' ? 'text-green-600' : 'text-red-600' }}">
-                                        {{ __($row->fix) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ number_format($row->haps, 1) }}%
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ number_format($row->q1_caps, 1) }}%
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ number_format($row->q2_caps, 1) }}%
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ number_format($row->q3_caps, 1) }}%
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ number_format($row->q4_caps, 1) }}%
-                                    </td>
-                                </tr>
-                            @endforeach
+                            <!-- Helper template for rows -->
+                            <template x-for="month in ['jan', 'feb', 'mar']">
+                                <template x-for="date in ['10th', '25th']">
+                                    <tr>
+                                        <template x-if="date === '10th'">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100 capitalize"
+                                                :rowspan="2" x-text="month"></td>
+                                        </template>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100"
+                                            x-text="date"></td>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                            <span x-text="'$' + ((q1[month] || 0) / 2).toFixed(2)"></span>
+                                        </td>
+                                        @foreach($analysis->rows as $row)
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                <span
+                                                    x-text="'$' + calculateTransfer((q1[month] || 0) / 2, '{{ $row->category }}').toFixed(2)"></span>
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                </template>
+                            </template>
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <!-- Analysis Cards (Mobile) -->
-            <div class="md:hidden space-y-4">
-                @foreach($analysis->rows as $row)
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold text-lg text-gray-900 dark:text-gray-100">{{ __($row->category) }}</h4>
-                            <span
-                                class="text-xs font-semibold px-2 py-1 rounded {{ $row->fix == 'Increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ __($row->fix) }}
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Actual') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    ${{ number_format($row->actual_amount, 2) }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('PF Target') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    ${{ number_format($row->pf_amount, 2) }}</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Bleed') }}</p>
-                                <p class="font-medium {{ $row->bleed < 0 ? 'text-red-500' : 'text-green-500' }}">
-                                    ${{ number_format($row->bleed, 2) }}
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('TAPS %') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ $row->taps_percentage }}%</p>
-                            </div>
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2 text-xs">
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('HAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">{{ number_format($row->haps, 1) }}%
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q1 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    {{ number_format($row->q1_caps, 1) }}%
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q2 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    {{ number_format($row->q2_caps, 1) }}%
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q3 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    {{ number_format($row->q3_caps, 1) }}%
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">{{ __('Q4 CAPS') }}</p>
-                                <p class="font-medium text-gray-900 dark:text-gray-100">
-                                    {{ number_format($row->q4_caps, 1) }}%
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <!-- Annual Summary Section -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Chart Section -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        {{ __('Actual vs Target (TAPS)') }}
-                    </h3>
-                    <canvas id="analysisChart"></canvas>
-                </div>
-
-                <!-- Summary Text -->
-                <div
-                    class="bg-indigo-50 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-indigo-900 dark:text-indigo-100">{{ __('Annual Summary') }}</h3>
-                    <p class="mt-2 text-sm text-indigo-700 dark:text-indigo-300">
-                        {{ __('Total Allocation:') }} ${{ number_format($analysis->rows->sum('pf_amount'), 2) }}
+                <div class="mt-8 text-xs text-gray-400">
+                    <p>* {{ __('Allocation Base is 50% of the total revenue for the month, assuming equal distribution for the 10th and 25th transfers.') }}
                     </p>
-
-                    <h4 class="mt-4 font-bold text-indigo-900 dark:text-indigo-100">{{ __('Money Moves (The Fix)') }}
-                    </h4>
-                    <ul class="mt-2 list-disc list-inside text-sm text-indigo-700 dark:text-indigo-300">
-                        @foreach($analysis->rows as $row)
-                            @if($row->bleed != 0)
-                                <li>
-                                    {{ __($row->category) }}:
-                                    <span class="font-bold">{{ __($row->fix) }}</span>
-                                    {{ __('by') }} ${{ number_format(abs($row->bleed), 2) }}
-                                    @if($row->fix == 'Increase')
-                                        {{ __('(Allocated too little)') }}
-                                    @else
-                                        {{ __('(Spent too much / Allocated too much)') }}
-                                    @endif
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
                 </div>
             </div>
 
-            <div class="mt-6">
-                <a href="{{ route('analyses.create') }}"
-                    class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">{!! __('Start New Analysis &rarr;') !!}</a>
-            </div>
         </div>
     </div>
 
-    <script type="module">
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('analysisChart');
+    <!-- Print Styles -->
+    <style>
+        @media print {
 
-            const labels = @json($analysis->rows->pluck('category'));
-            const actuals = @json($analysis->rows->pluck('actual_amount'));
-            const targets = @json($analysis->rows->pluck('pf_amount'));
+            nav,
+            header,
+            .print\:hidden,
+            aside,
+            .fixed.inset-y-0 {
+                display: none !important;
+            }
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Actual ($)',
-                            data: actuals,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Target (PF $)',
-                            data: targets,
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return '$' + value;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+
+            .max-w-7xl {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
 </x-app-layout>
