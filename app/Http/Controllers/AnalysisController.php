@@ -119,31 +119,37 @@ class AnalysisController extends Controller
         }
 
         $validated = $request->validate([
+            'client_name' => 'nullable|string|max:255',
             'q1_revenue_data' => 'nullable|array',
-            'monthly_caps' => 'nullable|array',
+            'q2_revenue_data' => 'nullable|array',
+            'q3_revenue_data' => 'nullable|array',
+            'q4_revenue_data' => 'nullable|array',
+            'rows_data' => 'nullable|array',
+            'rows_data.*.id' => 'required|exists:analysis_rows,id',
+            'rows_data.*.q1_caps' => 'required|numeric',
+            'rows_data.*.q2_caps' => 'nullable|numeric',
+            'rows_data.*.q3_caps' => 'nullable|numeric',
+            'rows_data.*.q4_caps' => 'nullable|numeric',
         ]);
 
-        // Save Q1 Revenue Data
-        if (isset($validated['q1_revenue_data'])) {
-            $analysis->update(['q1_revenue_data' => $validated['q1_revenue_data']]);
-        }
+        $analysis->update([
+            'client_name' => $validated['client_name'] ?? $analysis->client_name,
+            'q1_revenue_data' => $validated['q1_revenue_data'] ?? $analysis->q1_revenue_data,
+            'q2_revenue_data' => $validated['q2_revenue_data'] ?? $analysis->q2_revenue_data,
+            'q3_revenue_data' => $validated['q3_revenue_data'] ?? $analysis->q3_revenue_data,
+            'q4_revenue_data' => $validated['q4_revenue_data'] ?? $analysis->q4_revenue_data,
+        ]);
 
-        // Save Custom Caps per Row
-        // monthly_caps comes as { jan: { 'Profit': 5, ... }, feb: ... }
-        if (isset($validated['monthly_caps'])) {
-            foreach ($analysis->rows as $row) {
-                $category = $row->category; // e.g., 'Profit'
-                $customData = [];
-
-                // Extract this category's caps for each month
-                foreach (['jan', 'feb', 'mar'] as $month) {
-                    if (isset($validated['monthly_caps'][$month][$category])) {
-                        $customData[$month] = $validated['monthly_caps'][$month][$category];
-                    }
-                }
-
-                if (!empty($customData)) {
-                    $row->update(['custom_caps_data' => $customData]);
+        if (isset($validated['rows_data'])) {
+            foreach ($validated['rows_data'] as $rowData) {
+                $row = $analysis->rows()->find($rowData['id']);
+                if ($row) {
+                    $row->update([
+                        'q1_caps' => $rowData['q1_caps'],
+                        'q2_caps' => $rowData['q2_caps'] ?? $row->q2_caps,
+                        'q3_caps' => $rowData['q3_caps'] ?? $row->q3_caps,
+                        'q4_caps' => $rowData['q4_caps'] ?? $row->q4_caps,
+                    ]);
                 }
             }
         }

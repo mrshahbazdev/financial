@@ -52,6 +52,9 @@
 <body>
     <div class="header">
         <h1>Profit First Analysis</h1>
+        @if($analysis->client_name)
+            <h2 style="margin-top: 5px; color: #555;">{{ $analysis->client_name }}</h2>
+        @endif
         <p>Report Date: {{ now()->format('M d, Y') }}</p>
         <p>Real Revenue: ${{ number_format($analysis->real_revenue, 2) }}</p>
     </div>

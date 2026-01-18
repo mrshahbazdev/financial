@@ -85,13 +85,34 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {{ number_format($row->q2_caps, 1) }}%
+                            <div class="flex items-center space-x-1">
+                                <input type="number" x-model.number="rows.find(r => r.id === {{ $row->id }}).q2_caps"
+                                    class="w-20 text-sm p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
+                                    step="0.1">
+                                <span class="print:inline hidden"
+                                    x-text="rows.find(r => r.id === {{ $row->id }}).q2_caps + '%'"></span>
+                                <span class="text-gray-400 print:hidden">%</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {{ number_format($row->q3_caps, 1) }}%
+                            <div class="flex items-center space-x-1">
+                                <input type="number" x-model.number="rows.find(r => r.id === {{ $row->id }}).q3_caps"
+                                    class="w-20 text-sm p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
+                                    step="0.1">
+                                <span class="print:inline hidden"
+                                    x-text="rows.find(r => r.id === {{ $row->id }}).q3_caps + '%'"></span>
+                                <span class="text-gray-400 print:hidden">%</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {{ number_format($row->q4_caps, 1) }}%
+                            <div class="flex items-center space-x-1">
+                                <input type="number" x-model.number="rows.find(r => r.id === {{ $row->id }}).q4_caps"
+                                    class="w-20 text-sm p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
+                                    step="0.1">
+                                <span class="print:inline hidden"
+                                    x-text="rows.find(r => r.id === {{ $row->id }}).q4_caps + '%'"></span>
+                                <span class="text-gray-400 print:hidden">%</span>
+                            </div>
                         </td>
                     </tr>
                 @endforeach
@@ -142,25 +163,25 @@
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">{{ __('Q1 CAPS') }}</p>
                     <p class="font-medium text-gray-900 dark:text-gray-100">
-                        {{ number_format($row->q1_caps, 1) }}%
+                        <span x-text="rows.find(r => r.id === {{ $row->id }}).q1_caps + '%'"></span>
                     </p>
                 </div>
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">{{ __('Q2 CAPS') }}</p>
                     <p class="font-medium text-gray-900 dark:text-gray-100">
-                        {{ number_format($row->q2_caps, 1) }}%
+                        <span x-text="rows.find(r => r.id === {{ $row->id }}).q2_caps + '%'"></span>
                     </p>
                 </div>
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">{{ __('Q3 CAPS') }}</p>
                     <p class="font-medium text-gray-900 dark:text-gray-100">
-                        {{ number_format($row->q3_caps, 1) }}%
+                        <span x-text="rows.find(r => r.id === {{ $row->id }}).q3_caps + '%'"></span>
                     </p>
                 </div>
                 <div>
                     <p class="text-gray-500 dark:text-gray-400">{{ __('Q4 CAPS') }}</p>
                     <p class="font-medium text-gray-900 dark:text-gray-100">
-                        {{ number_format($row->q4_caps, 1) }}%
+                        <span x-text="rows.find(r => r.id === {{ $row->id }}).q4_caps + '%'"></span>
                     </p>
                 </div>
             </div>
