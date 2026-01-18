@@ -1,5 +1,5 @@
 <!-- Analysis Table (Desktop) -->
-<div class="hidden md:block bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+<div class="hidden md:block print:block bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
     <div class="p-6 text-gray-900 dark:text-gray-100 overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
@@ -101,7 +101,7 @@
 </div>
 
 <!-- Analysis Cards (Mobile) -->
-<div class="md:hidden space-y-4">
+<div class="md:hidden print:hidden space-y-4">
     @foreach($analysis->rows as $row)
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4">
             <div class="flex justify-between items-center mb-2">
