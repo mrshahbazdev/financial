@@ -311,6 +311,14 @@
                 display: none !important;
             }
 
+            .desktop-table-view {
+                display: block !important;
+            }
+
+            .mobile-card-view {
+                display: none !important;
+            }
+
             body {
                 background-color: white !important;
                 color: black !important;
