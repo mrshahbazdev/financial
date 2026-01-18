@@ -168,7 +168,9 @@
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
             {{ __('Actual vs Target (TAPS)') }}
         </h3>
-        <canvas id="analysisChart"></canvas>
+        <div class="relative h-96 w-full">
+            <canvas id="analysisChart"></canvas>
+        </div>
     </div>
 
     <!-- Summary Text -->
