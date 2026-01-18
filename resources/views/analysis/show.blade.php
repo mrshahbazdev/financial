@@ -455,10 +455,15 @@
 
             nav,
             header,
+            header,
             .print\:hidden,
             aside,
             .fixed.inset-y-0 {
                 display: none !important;
+            }
+
+            .print\:inline {
+                display: inline !important;
             }
 
             .desktop-table-view {
