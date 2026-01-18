@@ -20,7 +20,7 @@
                                 class="font-bold text-indigo-600 dark:text-indigo-400"
                                 x-text="revenueChange + '%'"></span>
                         </label>
-                        <input type="range" min="-50" max="50" step="5" x-model="revenueChange" @input="updateCharts()"
+                        <input type="range" min="-50" max="50" step="5" x-model="revenueChange"
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
                             <span>-50%</span>
@@ -35,7 +35,7 @@
                             {{ __('Reduce OPEX by:') }} <span class="font-bold text-red-600 dark:text-red-400"
                                 x-text="opexReduction + '%'"></span>
                         </label>
-                        <input type="range" min="0" max="30" step="5" x-model="opexReduction" @input="updateCharts()"
+                        <input type="range" min="0" max="30" step="5" x-model="opexReduction"
                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
                             <span>0%</span>
@@ -109,6 +109,8 @@
 
                 init() {
                     this.initChart();
+                    this.$watch('revenueChange', () => this.updateCharts());
+                    this.$watch('opexReduction', () => this.updateCharts());
                 },
 
                 get projectedRevenue() {
