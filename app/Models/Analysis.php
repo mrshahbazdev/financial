@@ -14,6 +14,11 @@ class Analysis extends Model
     protected $fillable = [
         'user_id',
         'real_revenue',
+        'q1_revenue_data',
+    ];
+
+    protected $casts = [
+        'q1_revenue_data' => 'array',
     ];
 
     public function user(): BelongsTo

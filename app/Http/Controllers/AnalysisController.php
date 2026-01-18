@@ -112,4 +112,42 @@ class AnalysisController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('analysis.pdf', compact('analysis'));
         return $pdf->download('profit-first-analysis-' . $analysis->id . '.pdf');
     }
+    public function updateTargets(Request $request, Analysis $analysis)
+    {
+        if ($analysis->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'q1_revenue_data' => 'nullable|array',
+            'monthly_caps' => 'nullable|array',
+        ]);
+
+        // Save Q1 Revenue Data
+        if (isset($validated['q1_revenue_data'])) {
+            $analysis->update(['q1_revenue_data' => $validated['q1_revenue_data']]);
+        }
+
+        // Save Custom Caps per Row
+        // monthly_caps comes as { jan: { 'Profit': 5, ... }, feb: ... }
+        if (isset($validated['monthly_caps'])) {
+            foreach ($analysis->rows as $row) {
+                $category = $row->category; // e.g., 'Profit'
+                $customData = [];
+
+                // Extract this category's caps for each month
+                foreach (['jan', 'feb', 'mar'] as $month) {
+                    if (isset($validated['monthly_caps'][$month][$category])) {
+                        $customData[$month] = $validated['monthly_caps'][$month][$category];
+                    }
+                }
+
+                if (!empty($customData)) {
+                    $row->update(['custom_caps_data' => $customData]);
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Targets updated successfully']);
+    }
 }

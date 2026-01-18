@@ -31,6 +31,11 @@
                 </div>
 
                 <div class="flex space-x-2">
+                    <button @click="saveData()" :disabled="isSaving"
+                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        <span x-show="!isSaving">{{ __('Save Changes') }}</span>
+                        <span x-show="isSaving">{{ __('Saving...') }}</span>
+                    </button>
                     <button @click="printPage()"
                         class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
                         {{ __('Print View') }}
@@ -152,7 +157,8 @@
                                             <span x-text="'$' + ((q1[month] || 0) / 2).toFixed(2)"></span>
                                         </td>
                                         @foreach($analysis->rows as $row)
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                            <td
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 <div class="flex flex-col space-y-1">
                                                     <div class="flex items-center space-x-1">
                                                         <input type="number"
@@ -160,7 +166,8 @@
                                                             class="w-16 text-xs p-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white print:hidden"
                                                             step="0.1">
                                                         <span class="text-xs print:hidden">%</span>
-                                                        <span class="hidden print:inline text-xs" x-text="monthlyCaps[month]['{{ $row->category }}'] + '%'"></span>
+                                                        <span class="hidden print:inline text-xs"
+                                                            x-text="monthlyCaps[month]['{{ $row->category }}'] + '%'"></span>
                                                     </div>
                                                     <span class="font-medium text-gray-900 dark:text-gray-100"
                                                         x-text="'$' + calculateTransfer((q1[month] || 0) / 2, '{{ $row->category }}', month).toFixed(2)"></span>
@@ -189,11 +196,12 @@
             Alpine.data('analysisLogic', (rows) => ({
                 activeTab: 'details',
                 chartInstance: null,
-                q1: { jan: 0, feb: 0, mar: 0 },
+                isSaving: false,
+                q1: @json($analysis->q1_revenue_data ?? ['jan' => 0, 'feb' => 0, 'mar' => 0]),
                 monthlyCaps: {
-                    jan: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
-                    feb: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
-                    mar: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.q1_caps }), {}),
+                    jan: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.jan ?? row.q1_caps }), {}),
+                    feb: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.feb ?? row.q1_caps }), {}),
+                    mar: rows.reduce((acc, row) => ({ ...acc, [row.category]: row.custom_caps_data?.mar ?? row.q1_caps }), {}),
                 },
                 initChart() {
                     if (this.chartInstance) {
@@ -245,6 +253,34 @@
                 calculateTransfer(amount, category, month) {
                     const cap = this.monthlyCaps[month]?.[category] || 0;
                     return (amount * (cap / 100));
+                },
+                async saveData() {
+                    this.isSaving = true;
+                    try {
+                        const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                q1_revenue_data: this.q1,
+                                monthly_caps: this.monthlyCaps
+                            })
+                        });
+
+                        if (response.ok) {
+                            // Optional: Show toast
+                            alert('Saved successfully!');
+                        } else {
+                            alert('Failed to save.');
+                        }
+                    } catch (error) {
+                        console.error('Error saving:', error);
+                        alert('Error saving data.');
+                    } finally {
+                        this.isSaving = false;
+                    }
                 },
                 printPage() {
                     window.print();

@@ -23,6 +23,11 @@ class AnalysisRow extends Model
         'q2_caps',
         'q3_caps',
         'q4_caps',
+        'custom_caps_data',
+    ];
+
+    protected $casts = [
+        'custom_caps_data' => 'array',
     ];
 
     public function analysis(): BelongsTo

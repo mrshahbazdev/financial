@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('analyses/{analysis}/pdf', [\App\Http\Controllers\AnalysisController::class, 'downloadPdf'])->name('analyses.pdf');
     Route::resource('analyses', \App\Http\Controllers\AnalysisController::class);
+    Route::post('/analyses/{analysis}/targets', [\App\Http\Controllers\AnalysisController::class, 'updateTargets'])->name('analyses.update-targets');
     Route::resource('taps', \App\Http\Controllers\TapController::class);
 });
 
