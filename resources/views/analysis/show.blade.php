@@ -153,18 +153,21 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th
-                                    scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ __('Date') }}
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     {{ __('Revenue') }}
                                 </th>
                                 <template x-for="row in rows" :key="row.id">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         <div class="flex flex-col">
                                             <span x-text="row.category"></span>
-                                            <span class="text-xxs text-gray-400" x-text="'(' + row.q1_caps + '%)'"></span>
+                                            <span class="text-xxs text-gray-400"
+                                                x-text="'(' + row.q1_caps + '%)'"></span>
                                         </div>
                                     </th>
                                 </template>
@@ -177,13 +180,16 @@
                                 { key: 'mar_10', label: 'Mar 10' }, { key: 'mar_25', label: 'Mar 25' }
                             ]">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" x-text="cycle.label"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100"
+                                        x-text="cycle.label"></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         <span x-text="'$' + (q1[cycle.key] || 0).toFixed(2)"></span>
                                     </td>
                                     <template x-for="row in rows" :key="row.id">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                            <span x-text="'$' + calculateTransfer((q1[cycle.key] || 0), row.category).toFixed(2)"></span>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                            <span
+                                                x-text="'$' + calculateTransfer((q1[cycle.key] || 0), row.category).toFixed(2)"></span>
                                         </td>
                                     </template>
                                 </tr>
@@ -203,146 +209,103 @@
 
     <!-- Print Styles -->
     <script>
+        <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('analysisLogic', (initialRows) => ({
-                activeTab: 'details',
-                chartInstance: null,
-                isSaving: false,
-                rows: initialRows,
-                q1: @json($analysis->q1_revenue_data ?? [
-                    'jan_10' => 0,
-                    'jan_25' => 0,
-                    'feb_10' => 0,
-                    'feb_25' => 0,
-                    'mar_10' => 0,
-                    'mar_25' => 0
-                ]),
-                initChart() {
-                    if (this.chartInstance) {
-                        this.chartInstance.destroy();
-                    }
+                Alpine.data('analysisLogic', (initialRows) => ({
+                    activeTab: 'details',
+                    chartInstance: null,
+                    isSaving: false,
+                    rows: initialRows,
+                    q1: @json($analysis->q1_revenue_data ?? [
+                        'jan_10' => 0,
+                        'jan_25' => 0,
+                        'feb_10' => 0,
+                        'feb_25' => 0,
+                        'mar_10' => 0,
+                        'mar_25' => 0
+                    ]),
+                    initChart() {
+                        if (this.chartInstance) {
+                            this.chartInstance.destroy();
+                        }
 
-                    this.$nextTick(() => {
-                        const ctx = document.getElementById('analysisChart');
-                        if (!ctx) return;
+                        this.$nextTick(() => {
+                            const ctx = document.getElementById('analysisChart');
+                            if (!ctx) return;
 
-                        this.chartInstance = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: this.rows.map(r => r.category),
-                                datasets: [
-                                    {
-                                        label: 'Actual ($)',
-                                        data: this.rows.map(r => r.actual_amount),
-                                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                                        borderColor: 'rgba(54, 162, 235, 1)',
-                                        borderWidth: 1
-                                    },
-                                    {
-                                        label: 'Target (PF $)',
-                                        data: this.rows.map(r => r.pf_amount),
-                                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function (value) {
-                                                return '$' + value;
+                            this.chartInstance = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: this.rows.map(r => r.category),
+                                    datasets: [
+                                        {
+                                            label: 'Actual ($)',
+                                            data: this.rows.map(r => r.actual_amount),
+                                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Target (PF $)',
+                                            data: this.rows.map(r => r.pf_amount),
+                                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 1
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            ticks: {
+                                                callback: function (value) {
+                                                    return '$' + value;
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
+                            });
                         });
-                    });
-                },
-
-                this.$nextTick(() => {
-                    const ctx = document.getElementById('analysisChart');
-                    if (!ctx) return;
-
-                    this.chartInstance = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: rows.map(r => r.category),
-                            datasets: [
-                                {
-                                    label: 'Actual ($)',
-                                    data: rows.map(r => r.actual_amount),
-                                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: 'Target (PF $)',
-                                    data: rows.map(r => r.pf_amount),
-                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        callback: function (value) {
-                                            return '$' + value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                });
-            },
-                calculateTransfer(amount, category, month) {
-                    const cap = this.monthlyCaps[month]?.[category] || 0;
-                    return(amount * (cap / 100));
-        },
-            async saveData() {
-            this.isSaving = true;
-            try {
-                const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({
-                        q1_revenue_data: this.q1,
-                        monthly_caps: this.monthlyCaps
-                    })
-                });
+                    calculateTransfer(amount, category) {
+                        const row = this.rows.find(r => r.category === category);
+                        return row ? (amount * (row.q1_caps / 100)) : 0;
+                    },
+                    async saveData() {
+                        this.isSaving = true;
+                        try {
+                            const response = await fetch('{{ route('analyses.update-targets', $analysis) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    q1_revenue_data: this.q1,
+                                    rows_data: this.rows.map(r => ({ id: r.id, q1_caps: r.q1_caps }))
+                                })
+                            });
 
-                if(response.ok) {
-            // Optional: Show toast
-            alert('Saved successfully!');
-        } else {
-            alert('Failed to save.');
-        }
-                    } catch (error) {
-            console.error('Error saving:', error);
-            alert('Error saving data.');
-        } finally {
-            this.isSaving = false;
-        }
-                },
-        printPage() {
-            window.print();
-        }
-            }));
+                            if (response.ok) {
+                                alert('{{ __('Saved successfully!') }}');
+                            } else {
+                                alert('{{ __('Failed to save.') }}');
+                            }
+                        } catch (error) {
+                            console.error('Error saving:', error);
+                            alert('{{ __('Error saving data.') }}');
+                        } finally {
+                            this.isSaving = false;
+                        }
+                    },
+                    printPage() {
+                        window.print();
+                    }
+                }));
         });
     </script>
     <style>
